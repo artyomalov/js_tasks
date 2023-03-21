@@ -1,369 +1,326 @@
-// const exp = (number, extent) => {
-//   if (extent === 0) return 1;
+const simple = [
+  "один",
+  "два",
+  "три",
+  "четыре",
+  "пять",
+  "шесть",
+  "семь",
+  "восемь",
+  "девять",
+];
+const twoDigitTeen = [
+  "одиннацать",
+  "двенадцать",
+  "тринадцать",
+  "четырнадцать",
+  "пятнадцать",
+  "шестнадцать",
+  "семнадцать",
+  "восемнадцать",
+  "девятнадцать",
+];
+const twoDigit = [
+  "десять",
+  "двадцать",
+  "тридцать",
+  "сорок",
+  "пятьдесят",
+  "шестьдесят",
+  "семьдесят",
+  "восемьдесят",
+  "девяносто",
+];
+const threeDigit = [
+  "сто",
+  "двести",
+  "триста",
+  "четыреста",
+  "пятьсот",
+  "шестьсот",
+  "семьсот",
+  "восемьсот",
+  "девятьсот",
+];
+const thousand = ["тысяча", "тысячи", "тысяч"];
+const [tyisyachA, tyisyachI, tyisyach] = thousand;
 
-//   return number * exp(number, extent - 1);
-// };
-// console.log(exp(2, 4));
+function translateToOneDigitNumber(array, number) {
+  if (array[0] === "0") {
+    return "ноль";
+  }
+  return simple[number - 1];
+}
 
-// const testArray = [1, [2, 3, [4, 5, 6, [7, 8, 9]]]];
+function translateToTwoDigitNumber(array, number) {
+  if (array[0] === 1 && array[1] === 0) {
+    return twoDigit[0];
+  } else if (array[0] === 1) {
+    return twoDigitTeen[number - 11];
+  } else if (array[0] > 1) {
+    if (array[1] === 0) {
+      return twoDigit[array[0] - 1];
+    } else {
+      return `${twoDigit[array[0] - 1]} ${simple[array[1] - 1]}`;
+    }
+  }
+}
 
-// const arrayFlatter = (arr) =>
-//   arr.reduce(
-//     (flatArray, element) =>
-//       flatArray.concat(
-//         Array.isArray(element) ? arrayFlatter(element) : element
-//       ),
-//     []
-//   );
-// console.log(arrayFlatter(testArray));
+function translateToThreeDigitNumber(array, number) {
+  if (array[1] === 0) {
+    if (array[2] === 0) {
+      return threeDigit[array[0] - 1];
+    } else {
+      return `${threeDigit[array[0] - 1]} ${simple[array[2] - 1]}`;
+    }
+  } else if (array[2] === 0) {
+    return `${threeDigit[array[0] - 1]} ${twoDigit[array[1] - 1]}`;
+  } else {
+    return array[1] === 1
+      ? `${threeDigit[array[0] - 1]} ${
+          twoDigitTeen[Number(array.slice(1, 3).join("")) - 11]
+        }`
+      : `${threeDigit[array[0] - 1]} ${twoDigit[array[1] - 1]} ${
+          simple[array[2] - 1]
+        }
+  `;
+  }
+}
+
+function translateToFourDigitNumber(array, number) {
+  const lastTwoTeenNumbersSetter =
+    twoDigitTeen[Number(array.slice(2).join("")) - 11];
+
+  const rightCaseSwitcher =
+    array[0] === 2
+      ? `две ${tyisyachI}`
+      : `${simple[array[0] - 1]} ${tyisyachI}`;
+
+  const twoDigitThousandMeaning = `${simple[array[0] - 1]} ${tyisyach}`;
+  const threeDigitNumberCounter = threeDigit[array[1] - 1];
+
+  if (array[0] === 1) {
+    if (array[1] === 0 && array[2] === 0 && array[3] === 0) {
+      return tyisyachA;
+    } else if (array[1] === 0 && array[2] === 0) {
+      return `${tyisyachA} ${simple[array[3] - 1]}`;
+    } else if (array[1] === 0) {
+      if (array[2] === 1) {
+        if (array[3] === 0) return `${tyisyachA} десять`;
+        return `${tyisyachA} ${twoDigitTeen[number - 1011]}`;
+      } else if (array[2] > 1) {
+        if (array[3] === 0) {
+          return `${tyisyachA} ${twoDigit[array[2] - 1]}`;
+        }
+
+        return `${tyisyachA} ${twoDigit[array[2] - 1]} ${simple[array[3] - 1]}`;
+      }
+    } else {
+      if (array[3] === 0) {
+        if (array[2] === 0) {
+          return `${tyisyachA} ${threeDigitNumberCounter}`;
+        }
+        return `${tyisyachA} ${threeDigitNumberCounter} ${
+          twoDigit[array[2] - 1]
+        }`;
+      } else if (array[2] === 0)
+        return `${tyisyachA} ${threeDigitNumberCounter} ${
+          simple[array[3] - 1]
+        }`;
+    }
+
+    return array[2] === 1
+      ? ` ${tyisyachA} ${threeDigitNumberCounter} ${lastTwoTeenNumbersSetter}`
+      : `${tyisyachA} ${threeDigitNumberCounter} ${twoDigit[array[2] - 1]} ${
+          simple[array[3] - 1]
+        }`;
+  } else if (array[0] > 1 && array[0] < 5) {
+    if (array[1] === 0 && array[2] === 0 && array[3] === 0) {
+      return rightCaseSwitcher;
+    } else if (array[1] === 0 && array[2] === 0) {
+      return `${rightCaseSwitcher} ${simple[array[3] - 1]}`;
+    } else if (array[1] === 0) {
+      if (array[2] === 1) {
+        if (array[3] === 0) return `${rightCaseSwitcher} десять`;
+
+        return `${rightCaseSwitcher} ${lastTwoTeenNumbersSetter}`;
+      } else if (array[2] > 1) {
+        if (array[3] === 0) {
+          return `${rightCaseSwitcher} ${twoDigit[array[2] - 1]}`;
+        }
+        return `${rightCaseSwitcher} ${twoDigit[array[2] - 1]} ${
+          simple[array[3] - 1]
+        }`;
+      }
+    } else {
+      if (array[3] === 0) {
+        if (array[2] === 0) {
+          return `${rightCaseSwitcher} ${threeDigitNumberCounter}`;
+        }
+
+        return `${rightCaseSwitcher} ${threeDigitNumberCounter} ${
+          twoDigit[array[2] - 1]
+        }`;
+      }
+    }
+    return array[2] === 1
+      ? ` ${rightCaseSwitcher} ${threeDigitNumberCounter} ${lastTwoTeenNumbersSetter}`
+      : `${rightCaseSwitcher} ${threeDigitNumberCounter} ${
+          array[2] === 0 ? "" : twoDigit[array[2] - 1] + ""
+        }${simple[array[3] - 1]}`;
+  } else {
+    if (array[1] === 0 && array[2] === 0 && array[3] === 0) {
+      return twoDigitThousandMeaning;
+    } else if (array[1] === 0 && array[2] === 0) {
+      return `${twoDigitThousandMeaning} ${simple[array[3] - 1]}`;
+    } else if (array[1] === 0) {
+      if (array[2] === 1) {
+        if (array[3] === 0) return `${twoDigitThousandMeaning} десять`;
+
+        return `${twoDigitThousandMeaning} ${lastTwoTeenNumbersSetter}`;
+      } else if (array[2] > 1) {
+        if (array[3] === 0) {
+          return `${twoDigitThousandMeaning} ${twoDigit[array[2] - 1]}`;
+        }
+
+        return `${twoDigitThousandMeaning} ${twoDigit[array[2] - 1]} ${
+          simple[array[3] - 1]
+        }`;
+      }
+    } else {
+      if (array[3] === 0) {
+        if (array[2] === 0) {
+          return `${twoDigitThousandMeaning} ${threeDigitNumberCounter}`;
+        }
+        return `${twoDigitThousandMeaning} ${threeDigitNumberCounter} ${
+          twoDigit[array[2] - 1]
+        }`;
+      }
+    }
+
+    return array[2] === 1
+      ? ` ${twoDigitThousandMeaning} ${threeDigitNumberCounter} ${lastTwoTeenNumbersSetter}`
+      : `${twoDigitThousandMeaning} ${threeDigitNumberCounter} ${
+          array[2] === 0 ? "" : twoDigit[array[2] - 1] + " "
+        }${simple[array[3] - 1]}`;
+  }
+}
+
+function translateToFiveDigitNumber(array, number) {
+  const numberTenSwitcher =
+    array[0] === 1 ? "десять" : `${twoDigit[array[0] - 1]}`;
+  const TwoTeenNumbersSetter = (start, end) =>
+    twoDigitTeen[Number(array.slice(start, end).join("")) - 11];
+  const lastTenSwitcher =
+    array.slice(3, 5)[0] === 1 && array.slice(3.5)[1] === 0
+      ? "десять"
+      : TwoTeenNumbersSetter(3, 5);
+  const twoDigitTeenSelector =
+    array[3] === 1
+      ? `${numberTenSwitcher} ${tyisyach} ${TwoTeenNumbersSetter(3, 5)}`
+      : `${numberTenSwitcher} ${tyisyach} ${twoDigit[array[3] - 1]} ${
+          simple[array[4] - 1]
+        }`;
+  const twoLastDigitTeenSelector = () => {
+    if (array[3] !== 1) {
+      return `${array[3] === 0 ? "" : twoDigit[array[3] - 1] + " "}${
+        array[4] === 0 ? "" : simple[array[4] - 1]
+      }`;
+    } else {
+      return array.slice(3, 5)[0] === 1 && array.slice(3.5)[1] === 0
+        ? "десять"
+        : TwoTeenNumbersSetter(3, 5);
+    }
+  };
+
+  if (array[1] === 0 && array[2] === 0 && array[3] === 0 && array[4] === 0) {
+    return `${numberTenSwitcher} ${tyisyach}`;
+  } else if (array[1] === 0 && array[2] === 0 && array[3] === 0) {
+    if (array[0] > 0) {
+      return `${numberTenSwitcher} ${tyisyach} ${simple[array[4] - 1]}`;
+    }
+  } else if (array[1] === 0 && array[2] === 0) {
+    return twoDigitTeenSelector;
+  } else if (array[1] === 0) {
+    return array[3] === 1
+      ? `${numberTenSwitcher} ${tyisyach} ${
+          threeDigit[array[2] - 1]
+        } ${lastTenSwitcher}`
+      : `${numberTenSwitcher} ${tyisyach} ${threeDigit[array[2] - 1]} ${
+          array[3] === 0 ? "" : twoDigit[array[3] - 1] + " "
+        }${simple[array[4] - 1]}`;
+  } else {
+    if (array[0] === 1) {
+      return `${TwoTeenNumbersSetter(0, 2)} ${tyisyach} ${
+        array[2] === 0 ? "" : threeDigit[array[2] - 1] + " "
+      }${array[3] === 0 ? simple[array[4] - 1] : twoLastDigitTeenSelector()}`;
+    } else if (array[0] > 1) {
+      if (array[1] === 1) {
+        if (array[2] === 0) {
+          return `${
+            twoDigit[array[0] - 1]
+          } одна ${tyisyachA} ${twoLastDigitTeenSelector()}`;
+        }
+
+        return `${twoDigit[array[0] - 1]} одна ${tyisyachA} ${
+          threeDigit[array[2] - 1]
+        } ${twoLastDigitTeenSelector()}`;
+      } else if (array[1] === 2) {
+        if (array[2] === 0) {
+          return `${
+            twoDigit[array[0] - 1]
+          } две ${tyisyachI} ${twoLastDigitTeenSelector()}`;
+        }
+
+        return `${twoDigit[array[0] - 1]} две ${tyisyachI} ${
+          threeDigit[array[2] - 1]
+        } ${twoLastDigitTeenSelector()}`;
+      } else if (array[1] > 2 && array[1] < 5) {
+        return `${twoDigit[array[0] - 1]} ${
+          simple[array[1] - 1]
+        } ${tyisyachI} ${
+          threeDigit[array[2] - 1]
+        } ${twoLastDigitTeenSelector()}`;
+      } else {
+        if (array[2] === 0) {
+          return `${twoDigit[array[0] - 1]} ${
+            simple[array[1] - 1]
+          } ${tyisyach} ${twoLastDigitTeenSelector()}`;
+        }
+
+        return `${twoDigit[array[0] - 1]} ${simple[array[1] - 1]} ${tyisyach} ${
+          threeDigit[array[2] - 1]
+        } ${twoLastDigitTeenSelector()}`;
+      }
+    }
+  }
+}
 
 function translator(number) {
-  const simple = [
-    "один",
-    "два",
-    "три",
-    "четыре",
-    "пять",
-    "шесть",
-    "семь",
-    "восемь",
-    "девять",
-  ];
-  const two_digit_teen = [
-    "одиннацать",
-    "двенадцать",
-    "тринадцать",
-    "четырнадцать",
-    "пятнадцать",
-    "шестнадцать",
-    "семнадцать",
-    "восемнадцать",
-    "девятнадцать",
-  ];
-  const two_digit = [
-    "десять",
-    "двадцать",
-    "тридцать",
-    "сорок",
-    "пятьдесят",
-    "шестьдесят",
-    "семьдесят",
-    "восемьдесят",
-    "девяносто",
-  ];
-  const three_digit = [
-    "сто",
-    "двести",
-    "триста",
-    "четыреста",
-    "пятьсот",
-    "шестьсот",
-    "семьсот",
-    "восемьсот",
-    "девятьсот",
-  ];
-  const thousand = ["тысяча", "тысячи", "тысяч"];
-
-  let numberString = number.toString();
+  const numberString = number.toString();
   const splittedNumber = numberString.split("").map(Number);
-
+  if (number > 100000) {
+    return "Число вне заданого диапазона";
+  }
   if (splittedNumber.length === 1) {
-    if (splittedNumber[0] === "0") {
-      return "ноль";
-    }
-    return simple[number - 1];
+    return translateToOneDigitNumber(splittedNumber, number);
   }
 
   if (splittedNumber.length === 2) {
-    if (splittedNumber[0] === 1 && splittedNumber[1] === 0) {
-      return two_digit[0];
-    } else if (splittedNumber[0] === 1) {
-      return two_digit_teen[number - 11];
-    } else if (splittedNumber[0] > 1) {
-      if (splittedNumber[1] === 0) {
-        return two_digit[splittedNumber[0] - 1];
-      } else {
-        return `${two_digit[splittedNumber[0] - 1]} ${
-          simple[splittedNumber[1] - 1]
-        }`;
-      }
-    }
+    return translateToTwoDigitNumber(splittedNumber, number);
   }
   if (splittedNumber.length === 3) {
-    if (splittedNumber[1] === 0) {
-      if (splittedNumber[2] === 0) {
-        return three_digit[splittedNumber[0] - 1];
-      } else {
-        return `${three_digit[splittedNumber[0] - 1]} ${
-          simple[splittedNumber[2] - 1]
-        }`;
-      }
-    } else if (splittedNumber[2] === 0) {
-      return `${three_digit[splittedNumber[0] - 1]} ${
-        two_digit[splittedNumber[1] - 1]
-      }`;
-    } else {
-      return splittedNumber[1] === 1
-        ? `${three_digit[splittedNumber[0] - 1]} ${
-            two_digit_teen[Number(splittedNumber.slice(1, 3).join("")) - 11]
-          }`
-        : `${three_digit[splittedNumber[0] - 1]} ${
-            two_digit[splittedNumber[1] - 1]
-          } ${simple[splittedNumber[2] - 1]}
-    `;
-    }
+    return translateToThreeDigitNumber(splittedNumber, number);
   }
 
   if (splittedNumber.length === 4) {
-    if (splittedNumber[0] === 1) {
-      if (
-        splittedNumber[1] === 0 &&
-        splittedNumber[2] === 0 &&
-        splittedNumber[3] === 0
-      ) {
-        return thousand[0];
-      } else if (splittedNumber[1] === 0 && splittedNumber[2] === 0) {
-        return `${thousand[0]} ${simple[splittedNumber[3] - 1]}`;
-      } else if (splittedNumber[1] === 0) {
-        if (splittedNumber[2] === 1) {
-          if (splittedNumber[3] === 0) return `${thousand[0]} десять`;
-          return `${thousand[0]} ${two_digit_teen[number - 1011]}`;
-        } else if (splittedNumber[2] > 1) {
-          if (splittedNumber[3] === 0) {
-            return `${thousand[0]} ${two_digit[splittedNumber[2] - 1]}`;
-          }
-
-          return `${thousand[0]} ${two_digit[splittedNumber[2] - 1]} ${
-            simple[splittedNumber[3] - 1]
-          }`;
-        }
-      } else {
-        if (splittedNumber[3] === 0) {
-          if (splittedNumber[2] === 0) {
-            console.log("test");
-            return `${thousand[0]} ${three_digit[splittedNumber[1] - 1]}`;
-          }
-          return `${thousand[0]} ${three_digit[splittedNumber[1] - 1]} ${
-            two_digit[splittedNumber[2] - 1]
-          }`;
-        } else if (splittedNumber[2] === 0)
-          return `${thousand[0]} ${three_digit[splittedNumber[1] - 1]} ${
-            simple[splittedNumber[3] - 1]
-          }`;
-      }
-
-      return splittedNumber[2] === 1
-        ? ` ${thousand[0]} ${three_digit[splittedNumber[1] - 1]} ${
-            two_digit_teen[Number(splittedNumber.slice(2).join("")) - 11]
-          }`
-        : `${thousand[0]} ${three_digit[splittedNumber[1] - 1]} ${
-            two_digit[splittedNumber[2] - 1]
-          } ${simple[splittedNumber[3] - 1]}`;
-    } else if (splittedNumber[0] > 1 && splittedNumber[0] < 5) {
-      const twoChoice =
-        splittedNumber[0] === 2
-          ? `две ${thousand[1]}`
-          : `${simple[splittedNumber[0] - 1]} ${thousand[1]}`;
-      if (
-        splittedNumber[1] === 0 &&
-        splittedNumber[2] === 0 &&
-        splittedNumber[3] === 0
-      ) {
-        return twoChoice;
-      } else if (splittedNumber[1] === 0 && splittedNumber[2] === 0) {
-        return `${twoChoice} ${simple[splittedNumber[3] - 1]}`;
-      } else if (splittedNumber[1] === 0) {
-        if (splittedNumber[2] === 1) {
-          if (splittedNumber[3] === 0) return `${twoChoice} десять`;
-
-          return `${twoChoice} ${
-            two_digit_teen[Number(splittedNumber.slice(2).join("")) - 11]
-          }`;
-        } else if (splittedNumber[2] > 1) {
-          if (splittedNumber[3] === 0) {
-            return `${twoChoice} ${two_digit[splittedNumber[2] - 1]}`;
-          }
-          return `${twoChoice} ${two_digit[splittedNumber[2] - 1]} ${
-            simple[splittedNumber[3] - 1]
-          }`;
-        }
-      } else {
-        if (splittedNumber[3] === 0) {
-          if (splittedNumber[2] === 0) {
-            return `${twoChoice} ${three_digit[splittedNumber[1] - 1]}`;
-          }
-
-          return `${twoChoice} ${three_digit[splittedNumber[1] - 1]} ${
-            two_digit[splittedNumber[2] - 1]
-          }`;
-        }
-      }
-
-      return splittedNumber[2] === 1
-        ? ` ${twoChoice} ${three_digit[splittedNumber[1] - 1]} ${
-            two_digit_teen[Number(splittedNumber.slice(2).join("")) - 11]
-          }`
-        : `${twoChoice} ${three_digit[splittedNumber[1] - 1]} ${
-            splittedNumber[2] === 0 ? "" : two_digit[splittedNumber[2] - 1] + ""
-          }${simple[splittedNumber[3] - 1]}`;
-    } else {
-      const nThousand = `${simple[splittedNumber[0] - 1]} ${thousand[2]}`;
-      if (
-        splittedNumber[1] === 0 &&
-        splittedNumber[2] === 0 &&
-        splittedNumber[3] === 0
-      ) {
-        return nThousand;
-      } else if (splittedNumber[1] === 0 && splittedNumber[2] === 0) {
-        return `${nThousand} ${simple[splittedNumber[3] - 1]}`;
-      } else if (splittedNumber[1] === 0) {
-        if (splittedNumber[2] === 1) {
-          if (splittedNumber[3] === 0) return `${nThousand} десять`;
-
-          return `${nThousand} ${
-            two_digit_teen[Number(splittedNumber.slice(2).join("")) - 11]
-          }`;
-        } else if (splittedNumber[2] > 1) {
-          if (splittedNumber[3] === 0) {
-            return `${nThousand} ${two_digit[splittedNumber[2] - 1]}`;
-          }
-
-          return `${nThousand} ${two_digit[splittedNumber[2] - 1]} ${
-            simple[splittedNumber[3] - 1]
-          }`;
-        }
-      } else {
-        if (splittedNumber[3] === 0) {
-          if (splittedNumber[2] === 0) {
-            return `${nThousand} ${three_digit[splittedNumber[1] - 1]}`;
-          }
-          return `${nThousand} ${three_digit[splittedNumber[1] - 1]} ${
-            two_digit[splittedNumber[2] - 1]
-          }`;
-        }
-      }
-
-      return splittedNumber[2] === 1
-        ? ` ${nThousand} ${three_digit[splittedNumber[1] - 1]} ${
-            two_digit_teen[Number(splittedNumber.slice(2).join("")) - 11]
-          }`
-        : `${nThousand} ${three_digit[splittedNumber[1] - 1]} ${
-            splittedNumber[2] === 0
-              ? ""
-              : two_digit[splittedNumber[2] - 1] + " "
-          }${simple[splittedNumber[3] - 1]}`; ///////////////////////////////////////////////////////////////////////////////////////////////////
-    }
+    return translateToFourDigitNumber(splittedNumber, number);
   }
   if (splittedNumber.length === 5) {
-    const tenChoice =
-      splittedNumber[0] === 1
-        ? "десять"
-        : `${two_digit[splittedNumber[0] - 1]}`;
-
-    if (
-      splittedNumber[1] === 0 &&
-      splittedNumber[2] === 0 &&
-      splittedNumber[3] === 0 &&
-      splittedNumber[4] === 0
-    ) {
-      return `${tenChoice} ${thousand[2]}`;
-    } else if (
-      splittedNumber[1] === 0 &&
-      splittedNumber[2] === 0 &&
-      splittedNumber[3] === 0
-    ) {
-      if (splittedNumber[0] > 0) {
-        return `${tenChoice} ${thousand[2]} ${simple[splittedNumber[4] - 1]}`;
-      }
-    } else if (splittedNumber[1] === 0 && splittedNumber[2] === 0) {
-      const teensChoice =
-        splittedNumber[3] === 1
-          ? `${tenChoice} ${thousand[2]} ${
-              two_digit_teen[Number(splittedNumber.slice(3, 5).join("")) - 11]
-            }`
-          : `${tenChoice} ${thousand[2]} ${two_digit[splittedNumber[3] - 1]} ${
-              simple[splittedNumber[4] - 1]
-            }`;
-      return teensChoice;
-    } else if (splittedNumber[1] === 0) {
-      const teensChoice =
-        splittedNumber[3] === 1
-          ? `${tenChoice} ${thousand[2]} ${
-              three_digit[splittedNumber[3] - 1]
-            }  ${
-              two_digit_teen[Number(splittedNumber.slice(3, 5).join("")) - 11]
-            }`
-          : `${tenChoice} ${thousand[2]} ${
-              three_digit[splittedNumber[2] - 1]
-            } ${
-              splittedNumber[3] === 0
-                ? ""
-                : two_digit[splittedNumber[3] - 1] + " "
-            }${simple[splittedNumber[4] - 1]}`;
-      return teensChoice;
-    } else {
-      const teensChoice =
-        splittedNumber[3] === 1
-          ? `${
-              two_digit_teen[Number(splittedNumber.slice(3, 5).join("")) - 11]
-            }`
-          : `${
-              splittedNumber[3] === 0
-                ? ""
-                : two_digit[splittedNumber[3] - 1] + " "
-            }${simple[splittedNumber[4] - 1]}`;
-      if (splittedNumber[0] === 1) {
-        return `${
-          two_digit_teen[Number(splittedNumber.slice(0, 2).join("")) - 11]
-        } ${thousand[2]} ${three_digit[splittedNumber[2] - 1]} ${teensChoice}`;
-      } else if (splittedNumber[0] > 1) {
-        if (splittedNumber[1] === 1) {
-          if (splittedNumber[2] === 0) {
-            return `${two_digit[splittedNumber[0] - 1]} одна ${
-              thousand[0]
-            } ${teensChoice}`;
-          }
-
-          return `${two_digit[splittedNumber[0] - 1]} одна ${thousand[0]} ${
-            three_digit[splittedNumber[2] - 1]
-          } ${teensChoice}`;
-        } else if (splittedNumber[1] === 2) {
-          if (splittedNumber[2] === 0) {
-            return `${two_digit[splittedNumber[0] - 1]} две ${
-              thousand[1]
-            } ${teensChoice}`;
-          }
-
-          return `${two_digit[splittedNumber[0] - 1]} две ${thousand[1]} ${
-            three_digit[splittedNumber[2] - 1]
-          } ${teensChoice}`;
-        } else if (splittedNumber[1] > 2 && splittedNumber[1] < 5) {
-          return `${two_digit[splittedNumber[0] - 1]} ${
-            simple[splittedNumber[1] - 1]
-          } ${thousand[1]} ${
-            three_digit[splittedNumber[2] - 1]
-          } ${teensChoice}`;
-        } else {
-          if (splittedNumber[2] === 0) {
-            return `${two_digit[splittedNumber[0] - 1]} ${
-              simple[splittedNumber[1] - 1]
-            } ${thousand[2]} ${teensChoice}`;
-          }
-
-          return `${two_digit[splittedNumber[0] - 1]} ${
-            simple[splittedNumber[1] - 1]
-          } ${thousand[2]} ${
-            three_digit[splittedNumber[2] - 1]
-          } ${teensChoice}`;
-        }
-      }
-    }
+    return translateToFiveDigitNumber(splittedNumber, number);
   }
 
-  return `${three_digit[0]} ${thousand[2]}`;
+  return `${threeDigit[0]} ${tyisyach}`;
 }
-
-window.translator = translator;
-console.log(translator());
-
-// return two_digit_teen[Number(splittedNumber.slice(0, 2).join("")) - 1];
+// const getNumber = prompt("number");
+console.log(translator(10000));
