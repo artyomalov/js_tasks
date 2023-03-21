@@ -1,21 +1,21 @@
-const exp = (number, extent) => {
-  if (extent === 0) return 1;
+// const exp = (number, extent) => {
+//   if (extent === 0) return 1;
 
-  return number * exp(number, extent - 1);
-};
-console.log(exp(2, 4));
+//   return number * exp(number, extent - 1);
+// };
+// console.log(exp(2, 4));
 
-const testArray = [1, [2, 3, [4, 5, 6, [7, 8, 9]]]];
+// const testArray = [1, [2, 3, [4, 5, 6, [7, 8, 9]]]];
 
-const arrayFlatter = (arr) =>
-  arr.reduce(
-    (flatArray, element) =>
-      flatArray.concat(
-        Array.isArray(element) ? arrayFlatter(element) : element
-      ),
-    []
-  );
-console.log(arrayFlatter(testArray));
+// const arrayFlatter = (arr) =>
+//   arr.reduce(
+//     (flatArray, element) =>
+//       flatArray.concat(
+//         Array.isArray(element) ? arrayFlatter(element) : element
+//       ),
+//     []
+//   );
+// console.log(arrayFlatter(testArray));
 
 function translator(number) {
   const simple = [
@@ -67,14 +67,14 @@ function translator(number) {
   let numberString = number.toString();
   const splittedNumber = numberString.split("").map(Number);
 
-  if (numberString.length === 1) {
-    if (numberString[0] === "0") {
+  if (splittedNumber.length === 1) {
+    if (splittedNumber[0] === "0") {
       return "ноль";
     }
     return simple[number - 1];
   }
 
-  if (numberString.length === 2) {
+  if (splittedNumber.length === 2) {
     if (splittedNumber[0] === 1 && splittedNumber[1] === 0) {
       return two_digit[0];
     } else if (splittedNumber[0] === 1) {
@@ -89,7 +89,7 @@ function translator(number) {
       }
     }
   }
-  if (numberString.length === 3) {
+  if (splittedNumber.length === 3) {
     if (splittedNumber[1] === 0) {
       if (splittedNumber[2] === 0) {
         return three_digit[splittedNumber[0] - 1];
@@ -102,14 +102,19 @@ function translator(number) {
       return `${three_digit[splittedNumber[0] - 1]} ${
         two_digit[splittedNumber[1] - 1]
       }`;
-    } else
-      return `${three_digit[splittedNumber[0] - 1]} ${
-        two_digit[splittedNumber[1] - 1]
-      } ${simple[splittedNumber[2] - 1]}
+    } else {
+      return splittedNumber[1] === 1
+        ? `${three_digit[splittedNumber[0] - 1]} ${
+            two_digit_teen[Number(splittedNumber.slice(1, 3).join("")) - 11]
+          }`
+        : `${three_digit[splittedNumber[0] - 1]} ${
+            two_digit[splittedNumber[1] - 1]
+          } ${simple[splittedNumber[2] - 1]}
     `;
+    }
   }
 
-  if (numberString.length === 4) {
+  if (splittedNumber.length === 4) {
     if (splittedNumber[0] === 1) {
       if (
         splittedNumber[1] === 0 &&
@@ -127,6 +132,7 @@ function translator(number) {
           if (splittedNumber[3] === 0) {
             return `${thousand[0]} ${two_digit[splittedNumber[2] - 1]}`;
           }
+
           return `${thousand[0]} ${two_digit[splittedNumber[2] - 1]} ${
             simple[splittedNumber[3] - 1]
           }`;
@@ -134,12 +140,16 @@ function translator(number) {
       } else {
         if (splittedNumber[3] === 0) {
           if (splittedNumber[2] === 0) {
+            console.log("test");
             return `${thousand[0]} ${three_digit[splittedNumber[1] - 1]}`;
           }
           return `${thousand[0]} ${three_digit[splittedNumber[1] - 1]} ${
             two_digit[splittedNumber[2] - 1]
           }`;
-        }
+        } else if (splittedNumber[2] === 0)
+          return `${thousand[0]} ${three_digit[splittedNumber[1] - 1]} ${
+            simple[splittedNumber[3] - 1]
+          }`;
       }
 
       return splittedNumber[2] === 1
@@ -165,7 +175,10 @@ function translator(number) {
       } else if (splittedNumber[1] === 0) {
         if (splittedNumber[2] === 1) {
           if (splittedNumber[3] === 0) return `${twoChoice} десять`;
-          return `${twoChoice} ${two_digit_teen[number - 1011]}`;
+
+          return `${twoChoice} ${
+            two_digit_teen[Number(splittedNumber.slice(2).join("")) - 11]
+          }`;
         } else if (splittedNumber[2] > 1) {
           if (splittedNumber[3] === 0) {
             return `${twoChoice} ${two_digit[splittedNumber[2] - 1]}`;
@@ -179,6 +192,7 @@ function translator(number) {
           if (splittedNumber[2] === 0) {
             return `${twoChoice} ${three_digit[splittedNumber[1] - 1]}`;
           }
+
           return `${twoChoice} ${three_digit[splittedNumber[1] - 1]} ${
             two_digit[splittedNumber[2] - 1]
           }`;
@@ -190,8 +204,8 @@ function translator(number) {
             two_digit_teen[Number(splittedNumber.slice(2).join("")) - 11]
           }`
         : `${twoChoice} ${three_digit[splittedNumber[1] - 1]} ${
-            two_digit[splittedNumber[2] - 1]
-          } ${simple[splittedNumber[3] - 1]}`;
+            splittedNumber[2] === 0 ? "" : two_digit[splittedNumber[2] - 1] + ""
+          }${simple[splittedNumber[3] - 1]}`;
     } else {
       const nThousand = `${simple[splittedNumber[0] - 1]} ${thousand[2]}`;
       if (
@@ -205,11 +219,15 @@ function translator(number) {
       } else if (splittedNumber[1] === 0) {
         if (splittedNumber[2] === 1) {
           if (splittedNumber[3] === 0) return `${nThousand} десять`;
-          return `${nThousand} ${two_digit_teen[number - 1011]}`;
+
+          return `${nThousand} ${
+            two_digit_teen[Number(splittedNumber.slice(2).join("")) - 11]
+          }`;
         } else if (splittedNumber[2] > 1) {
           if (splittedNumber[3] === 0) {
             return `${nThousand} ${two_digit[splittedNumber[2] - 1]}`;
           }
+
           return `${nThousand} ${two_digit[splittedNumber[2] - 1]} ${
             simple[splittedNumber[3] - 1]
           }`;
@@ -230,11 +248,13 @@ function translator(number) {
             two_digit_teen[Number(splittedNumber.slice(2).join("")) - 11]
           }`
         : `${nThousand} ${three_digit[splittedNumber[1] - 1]} ${
-            two_digit[splittedNumber[2] - 1]
-          } ${simple[splittedNumber[3] - 1]}`;
+            splittedNumber[2] === 0
+              ? ""
+              : two_digit[splittedNumber[2] - 1] + " "
+          }${simple[splittedNumber[3] - 1]}`; ///////////////////////////////////////////////////////////////////////////////////////////////////
     }
   }
-  if (numberString.length === 5) {
+  if (splittedNumber.length === 5) {
     const tenChoice =
       splittedNumber[0] === 1
         ? "десять"
@@ -275,9 +295,11 @@ function translator(number) {
             }`
           : `${tenChoice} ${thousand[2]} ${
               three_digit[splittedNumber[2] - 1]
-            } ${two_digit[splittedNumber[3] - 1]} ${
-              simple[splittedNumber[4] - 1]
-            }`;
+            } ${
+              splittedNumber[3] === 0
+                ? ""
+                : two_digit[splittedNumber[3] - 1] + " "
+            }${simple[splittedNumber[4] - 1]}`;
       return teensChoice;
     } else {
       const teensChoice =
@@ -285,19 +307,33 @@ function translator(number) {
           ? `${
               two_digit_teen[Number(splittedNumber.slice(3, 5).join("")) - 11]
             }`
-          : `${two_digit[splittedNumber[3] - 1]} ${
-              simple[splittedNumber[4] - 1]
-            }`;
+          : `${
+              splittedNumber[3] === 0
+                ? ""
+                : two_digit[splittedNumber[3] - 1] + " "
+            }${simple[splittedNumber[4] - 1]}`;
       if (splittedNumber[0] === 1) {
         return `${
           two_digit_teen[Number(splittedNumber.slice(0, 2).join("")) - 11]
         } ${thousand[2]} ${three_digit[splittedNumber[2] - 1]} ${teensChoice}`;
       } else if (splittedNumber[0] > 1) {
         if (splittedNumber[1] === 1) {
+          if (splittedNumber[2] === 0) {
+            return `${two_digit[splittedNumber[0] - 1]} одна ${
+              thousand[0]
+            } ${teensChoice}`;
+          }
+
           return `${two_digit[splittedNumber[0] - 1]} одна ${thousand[0]} ${
             three_digit[splittedNumber[2] - 1]
           } ${teensChoice}`;
         } else if (splittedNumber[1] === 2) {
+          if (splittedNumber[2] === 0) {
+            return `${two_digit[splittedNumber[0] - 1]} две ${
+              thousand[1]
+            } ${teensChoice}`;
+          }
+
           return `${two_digit[splittedNumber[0] - 1]} две ${thousand[1]} ${
             three_digit[splittedNumber[2] - 1]
           } ${teensChoice}`;
@@ -307,12 +343,19 @@ function translator(number) {
           } ${thousand[1]} ${
             three_digit[splittedNumber[2] - 1]
           } ${teensChoice}`;
-        } else
+        } else {
+          if (splittedNumber[2] === 0) {
+            return `${two_digit[splittedNumber[0] - 1]} ${
+              simple[splittedNumber[1] - 1]
+            } ${thousand[2]} ${teensChoice}`;
+          }
+
           return `${two_digit[splittedNumber[0] - 1]} ${
             simple[splittedNumber[1] - 1]
           } ${thousand[2]} ${
             three_digit[splittedNumber[2] - 1]
           } ${teensChoice}`;
+        }
       }
     }
   }
@@ -320,6 +363,7 @@ function translator(number) {
   return `${three_digit[0]} ${thousand[2]}`;
 }
 
-console.log(translator(19323));
+window.translator = translator;
+console.log(translator());
 
 // return two_digit_teen[Number(splittedNumber.slice(0, 2).join("")) - 1];
